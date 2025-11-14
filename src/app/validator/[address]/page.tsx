@@ -35,6 +35,7 @@ export default function ValidatorDetail() {
   const [balances, setBalances] = useState<TransactionBalance[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [reloadFlag, setReloadFlag] = useState(0);
 
   useEffect(() => {
     const stored = localStorage.getItem("bitquery_token");
@@ -90,7 +91,7 @@ export default function ValidatorDetail() {
     return () => {
       cancelled = true;
     };
-  }, [address, token]);
+  }, [address, token, reloadFlag]);
 
   const latest = balances[0];
   const summary = useMemo(() => summarizeRewards(balances), [balances]);
@@ -140,6 +141,30 @@ export default function ValidatorDetail() {
                 Network · Ethereum
               </p>
             </div>
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => setReloadFlag((prev) => prev + 1)}
+                className="rounded-full border border-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-600 transition hover:bg-emerald-50 dark:border-emerald-400 dark:text-emerald-300 dark:hover:bg-emerald-400/10"
+              >
+                {loading ? "Refreshing…" : "Load latest data"}
+              </button>
+              <Link
+                href="/"
+                className="rounded-full border border-zinc-200 px-4 py-2 text-sm font-semibold text-zinc-600 transition hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:text-white"
+              >
+                ← Back to dashboard
+              </Link>
+              <Link
+                href="https://ide.bitquery.io/total-tips-received-by-a-validator-in-last-24-hrs_1/?utm_source=github&utm_medium=referral&utm_campaign=staking-dashboard"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border border-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-600 transition hover:bg-emerald-50 dark:border-emerald-400 dark:text-emerald-300 dark:hover:bg-emerald-400/10"
+              >
+                Get API
+              </Link>
+            </div>
+            {/*
             <Link
               href="/"
               className="rounded-full border border-zinc-200 px-4 py-2 text-sm font-semibold text-zinc-600 transition hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:text-white"
@@ -153,7 +178,7 @@ export default function ValidatorDetail() {
               className="rounded-full border border-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-600 transition hover:bg-emerald-50 dark:border-emerald-400 dark:text-emerald-300 dark:hover:bg-emerald-400/10"
             >
               Get API
-            </Link>
+            </Link> */}
           </div>
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             <div className="rounded-2xl border border-zinc-100 bg-white/80 p-4 text-sm shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50">

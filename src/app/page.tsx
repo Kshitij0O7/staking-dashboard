@@ -11,6 +11,7 @@ export default function Home() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [reloadFlag, setReloadFlag] = useState(0);
 
   useEffect(() => {
     const stored = localStorage.getItem("bitquery_token");
@@ -61,7 +62,7 @@ export default function Home() {
     return () => {
       cancelled = true;
     };
-  }, [token]);
+  }, [token, reloadFlag]);
 
   const handleTokenSave = (value: string) => {
     setToken(value);
@@ -121,6 +122,8 @@ export default function Home() {
       data={data}
       token={token}
       onResetToken={handleTokenReset}
+      onReload={() => setReloadFlag((prev) => prev + 1)}
+      isLoading={loading}
     />
   );
 }
