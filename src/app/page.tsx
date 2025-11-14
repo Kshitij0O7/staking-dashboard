@@ -116,5 +116,11 @@ export default function Home() {
     );
   }
 
-  return <DashboardShell data={data} onResetToken={handleTokenReset} />;
+  return (
+    <DashboardShell
+      data={data}
+      token={token}
+      onResetToken={handleTokenReset}
+    />
+  );
 }

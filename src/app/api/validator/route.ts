@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { fetchValidatorHistory } from "@/lib/staking-data";
 
 export async function POST(request: Request) {
-  const { token, address, hours = 72 } = await request
+  const { token, address, hours = 24 } = await request
     .json()
     .catch(() => ({}));
 

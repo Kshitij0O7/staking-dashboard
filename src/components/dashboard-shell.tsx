@@ -3,10 +3,12 @@
 import Link from "next/link";
 import type { TransactionBalance } from "@/types/staking";
 import type { DashboardData } from "@/types/dashboard";
+import LiveRewardsTable from "@/components/live-rewards-table";
 
 type DashboardProps = {
   data: DashboardData;
   onResetToken?: () => void;
+  token: string;
 };
 
 function formatNumber(value?: string, digits = 2) {
@@ -87,7 +89,7 @@ function ValidatorTable({ items }: { items: TransactionBalance[] }) {
   );
 }
 
-export default function DashboardShell({ data, onResetToken }: DashboardProps) {
+export default function DashboardShell({ data, onResetToken, token }: DashboardProps) {
   return (
     <main className="min-h-screen bg-gradient-to-b from-zinc-50 via-white to-zinc-100 px-6 py-12 font-sans text-zinc-900 dark:from-black dark:via-zinc-950 dark:to-black dark:text-white">
       <div className="mx-auto flex max-w-6xl flex-col gap-8">
@@ -132,15 +134,8 @@ export default function DashboardShell({ data, onResetToken }: DashboardProps) {
             SDK. Monitor leaderboards, earnings, and validator performance on
             Ethereum using Bitquery&apos;s Transaction Balance API.
           </p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl border border-zinc-100 bg-white/80 p-4 text-sm shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50">
-              <p className="text-zinc-500">Time horizon</p>
-              <p className="mt-2 text-2xl font-semibold">Last 24h</p>
-            </div>
-            <div className="rounded-2xl border border-zinc-100 bg-white/80 p-4 text-sm shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50">
-              <p className="text-zinc-500">Live streams</p>
-              <p className="mt-2 text-2xl font-semibold">WebSocket Ready</p>
-            </div>
+          <div className="mt-6">
+            <LiveRewardsTable token={token} />
           </div>
         </header>
 
@@ -179,30 +174,6 @@ export default function DashboardShell({ data, onResetToken }: DashboardProps) {
         )}
 
         <ValidatorTable items={data.top} />
-
-        <section className="rounded-3xl border border-zinc-100 bg-white/70 p-8 shadow-sm backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/70">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-zinc-500">
-                Streaming Ready
-              </p>
-              <h2 className="mt-2 text-2xl font-semibold">
-                Want live alerts from staking-rewards-api?
-              </h2>
-              <p className="mt-3 text-base text-zinc-600 dark:text-zinc-300">
-                Use the <code className="font-mono">runValidatorRewardsStreamETH</code>{" "}
-                helper to subscribe to WebSocket feeds right from this dashboard.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-dashed border-emerald-200 bg-emerald-50/60 p-4 text-sm text-emerald-800 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-200">
-              <p className="font-semibold">Example hook</p>
-              <p className="mt-2 font-mono text-xs">
-                const ws = await runValidatorRewardsStreamETH(token, address, &#123;
-                onData, onError &#125;);
-              </p>
-            </div>
-          </div>
-        </section>
       </div>
     </main>
   );
