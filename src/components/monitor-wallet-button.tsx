@@ -5,7 +5,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 type Props = {
   address: string;
-  network: "eth" | "bsc";
   token?: string;
 };
 
@@ -14,7 +13,7 @@ type StreamLog = {
   message: string;
 };
 
-export default function MonitorWalletButton({ address, network, token }: Props) {
+export default function MonitorWalletButton({ address, token }: Props) {
   const [isStreaming, setIsStreaming] = useState(false);
   const [logs, setLogs] = useState<StreamLog[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +48,7 @@ export default function MonitorWalletButton({ address, network, token }: Props) 
       const response = await fetch("/api/validator-stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ address, network, token }),
+        body: JSON.stringify({ address, token }),
         signal: controller.signal,
       });
 
@@ -132,7 +131,7 @@ export default function MonitorWalletButton({ address, network, token }: Props) 
         <p className="text-sm text-rose-600 dark:text-rose-400">{error}</p>
       )}
       <Link
-        href={network === "eth" ? "https://ide.bitquery.io/monitor-validator-rewards/?utm_source=github&utm_medium=referral&utm_campaign=staking-dashboard" : "https://ide.bitquery.io/Copy-of-monitor-validator-rewards-bsc/?utm_source=github&utm_medium=referral&utm_campaign=staking-dashboard"}
+        href="https://ide.bitquery.io/monitor-validator-rewards/?utm_source=github&utm_medium=referral&utm_campaign=staking-dashboard"
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex w-full items-center justify-center rounded-full border border-emerald-500 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-emerald-600 transition hover:bg-emerald-50 dark:border-emerald-400 dark:text-emerald-300 dark:hover:bg-emerald-400/10"

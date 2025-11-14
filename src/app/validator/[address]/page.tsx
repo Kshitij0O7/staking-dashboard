@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import MonitorWalletButton from "@/components/monitor-wallet-button";
 import type { TransactionBalance } from "@/types/staking";
 
@@ -27,10 +27,8 @@ function summarizeRewards(list: TransactionBalance[]) {
 
 export default function ValidatorDetail() {
   const params = useParams<{ address?: string }>();
-  const searchParams = useSearchParams();
 
   const address = params?.address ?? "";
-  const network = searchParams?.get("network") === "bsc" ? "bsc" : "eth";
 
   const [token, setToken] = useState<string | null>(null);
   const [tokenReady, setTokenReady] = useState(false);
@@ -62,7 +60,7 @@ export default function ValidatorDetail() {
         const response = await fetch("/api/validator", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token, address, network }),
+          body: JSON.stringify({ token, address }),
         });
 
         if (!response.ok) {
@@ -92,7 +90,7 @@ export default function ValidatorDetail() {
     return () => {
       cancelled = true;
     };
-  }, [address, network, token]);
+  }, [address, token]);
 
   const latest = balances[0];
   const summary = useMemo(() => summarizeRewards(balances), [balances]);
@@ -139,7 +137,7 @@ export default function ValidatorDetail() {
               </p>
               <h1 className="mt-3 text-2xl font-semibold">{address}</h1>
               <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-                Network · {network === "eth" ? "Ethereum" : "BSC"}
+                Network · Ethereum
               </p>
             </div>
             <Link
@@ -149,7 +147,7 @@ export default function ValidatorDetail() {
               ← Back to dashboard
             </Link>
             <Link
-              href={network === "eth" ? "https://ide.bitquery.io/total-tips-received-by-a-validator-in-last-24-hrs_1/?utm_source=github&utm_medium=referral&utm_campaign=staking-dashboard" : "https://ide.bitquery.io/total-tips-received-by-a-validator-in-last-24-hrs-bsc?utm_source=github&utm_medium=referral&utm_campaign=staking-dashboard"}
+              href="https://ide.bitquery.io/total-tips-received-by-a-validator-in-last-24-hrs_1/?utm_source=github&utm_medium=referral&utm_campaign=staking-dashboard"
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full border border-emerald-500 px-4 py-2 text-sm font-semibold text-emerald-600 transition hover:bg-emerald-50 dark:border-emerald-400 dark:text-emerald-300 dark:hover:bg-emerald-400/10"
@@ -215,7 +213,7 @@ export default function ValidatorDetail() {
             )}
           </div>
 
-          <MonitorWalletButton token={token ?? undefined} address={address} network={network} />
+          <MonitorWalletButton token={token ?? undefined} address={address} />
         </section>
 
         <section className="rounded-3xl border border-zinc-100 bg-white/70 p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/70">

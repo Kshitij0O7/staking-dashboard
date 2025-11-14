@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import NetworkToggleCard from "@/components/network-toggle-card";
 import type { TransactionBalance } from "@/types/staking";
 import type { DashboardData } from "@/types/dashboard";
 
@@ -19,15 +17,7 @@ function formatNumber(value?: string, digits = 2) {
   return num.toFixed(digits);
 }
 
-function ValidatorTable({
-  title,
-  items,
-  network,
-}: {
-  title: string;
-  items: TransactionBalance[];
-  network: "eth" | "bsc";
-}) {
+function ValidatorTable({ items }: { items: TransactionBalance[] }) {
   return (
     <section className="rounded-2xl border border-zinc-100 bg-white/70 p-6 shadow-sm backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/70">
       <div className="flex items-center justify-between">
@@ -36,7 +26,7 @@ function ValidatorTable({
             Network
           </p>
           <h2 className="text-xl font-semibold text-zinc-900 dark:text-white">
-            {title}
+            Ethereum · Top Validators
           </h2>
         </div>
         <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-300">
@@ -59,7 +49,7 @@ function ValidatorTable({
                 <td className="px-4 py-3 font-mono text-xs text-zinc-600 dark:text-zinc-300">
                   {item.TokenBalance?.Address ? (
                     <Link
-                      href={`/validator/${item.TokenBalance.Address}?network=${network}`}
+                      href={`/validator/${item.TokenBalance.Address}`}
                       className="text-emerald-600 underline-offset-4 hover:underline dark:text-emerald-300"
                     >
                       {item.TokenBalance.Address}
@@ -97,15 +87,7 @@ function ValidatorTable({
   );
 }
 
-const NETWORK_LABEL: Record<"eth" | "bsc", string> = {
-  eth: "Ethereum",
-  bsc: "BSC",
-};
-
 export default function DashboardShell({ data, onResetToken }: DashboardProps) {
-  const [network, setNetwork] = useState<"eth" | "bsc">("eth");
-  const selected = data[network];
-
   return (
     <main className="min-h-screen bg-gradient-to-b from-zinc-50 via-white to-zinc-100 px-6 py-12 font-sans text-zinc-900 dark:from-black dark:via-zinc-950 dark:to-black dark:text-white">
       <div className="mx-auto flex max-w-6xl flex-col gap-8">
@@ -125,7 +107,7 @@ export default function DashboardShell({ data, onResetToken }: DashboardProps) {
                 </button>
               )}
               <Link
-                href={network === "eth" ? "https://ide.bitquery.io/top-validators-by-total-tips-in-last-24-hrs/?utm_source=github&utm_medium=referral&utm_campaign=staking-dashboard" : "https://ide.bitquery.io/top-validators-by-total-tips-in-last-24-hrs-bsc?utm_source=github&utm_medium=referral&utm_campaign=staking-dashboard"}
+                href="https://ide.bitquery.io/top-validators-by-total-tips-in-last-24-hrs/?utm_source=github&utm_medium=referral&utm_campaign=staking-dashboard"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-full border border-emerald-500 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-emerald-600 transition hover:bg-emerald-50 dark:border-emerald-400 dark:text-emerald-300 dark:hover:bg-emerald-400/10"
@@ -148,19 +130,13 @@ export default function DashboardShell({ data, onResetToken }: DashboardProps) {
               staking-rewards-api
             </Link>{" "}
             SDK. Monitor leaderboards, earnings, and validator performance on
-            Ethereum and BSC using Bitquery&apos;s Transaction Balance API.
+            Ethereum using Bitquery&apos;s Transaction Balance API.
           </p>
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             <div className="rounded-2xl border border-zinc-100 bg-white/80 p-4 text-sm shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50">
               <p className="text-zinc-500">Time horizon</p>
               <p className="mt-2 text-2xl font-semibold">Last 24h</p>
             </div>
-            <NetworkToggleCard
-              network={network}
-              onNetworkChange={setNetwork}
-              topEth={data.eth.top}
-              topBsc={data.bsc.top}
-            />
             <div className="rounded-2xl border border-zinc-100 bg-white/80 p-4 text-sm shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50">
               <p className="text-zinc-500">Live streams</p>
               <p className="mt-2 text-2xl font-semibold">WebSocket Ready</p>
@@ -168,45 +144,41 @@ export default function DashboardShell({ data, onResetToken }: DashboardProps) {
           </div>
         </header>
 
-        {selected.spotlight && (
+        {data.spotlight && (
           <section className="grid gap-6 rounded-3xl border border-zinc-100 bg-gradient-to-br from-emerald-50 via-white to-white p-8 shadow-sm dark:border-zinc-800 dark:from-emerald-500/10 dark:via-zinc-900 dark:to-zinc-900">
             <div>
               <p className="text-xs uppercase tracking-[0.4em] text-emerald-500">
-                Spotlight validator · {NETWORK_LABEL[network]}
+                Spotlight validator · Ethereum
               </p>
               <h2 className="mt-2 text-2xl font-semibold">
-                {selected.spotlight.TokenBalance?.Address ?? "Top performer"}
+                {data.spotlight.TokenBalance?.Address ?? "Top performer"}
               </h2>
             </div>
             <div className="grid gap-4 sm:grid-cols-3">
               <article className="rounded-2xl border border-emerald-100 bg-white/80 p-4 text-sm shadow-sm dark:border-emerald-500/30 dark:bg-zinc-900">
                 <p className="text-zinc-500">Total tips (native)</p>
                 <p className="mt-2 text-3xl font-semibold text-zinc-900 dark:text-white">
-                  {formatNumber(selected.spotlight.Total_tip_native, 4)}{" "}
-                  {selected.spotlight.TokenBalance?.Currency?.Symbol}
+                  {formatNumber(data.spotlight.Total_tip_native, 4)}{" "}
+                  {data.spotlight.TokenBalance?.Currency?.Symbol}
                 </p>
               </article>
               <article className="rounded-2xl border border-emerald-100 bg-white/80 p-4 text-sm shadow-sm dark:border-emerald-500/30 dark:bg-zinc-900">
                 <p className="text-zinc-500">Total tips (USD)</p>
                 <p className="mt-2 text-3xl font-semibold text-zinc-900 dark:text-white">
-                  ${formatNumber(selected.spotlight.Total_tip_usd, 2)}
+                  ${formatNumber(data.spotlight.Total_tip_usd, 2)}
                 </p>
               </article>
               <article className="rounded-2xl border border-emerald-100 bg-white/80 p-4 text-sm shadow-sm dark:border-emerald-500/30 dark:bg-zinc-900">
                 <p className="text-zinc-500">Blocks rewarded</p>
                 <p className="mt-2 text-3xl font-semibold text-zinc-900 dark:text-white">
-                  {selected.spotlight.number_of_tips ?? "—"}
+                  {data.spotlight.number_of_tips ?? "—"}
                 </p>
               </article>
             </div>
           </section>
         )}
 
-        <ValidatorTable
-          title={`${NETWORK_LABEL[network]} · Top Validators`}
-          items={selected.top}
-          network={network}
-        />
+        <ValidatorTable items={data.top} />
 
         <section className="rounded-3xl border border-zinc-100 bg-white/70 p-8 shadow-sm backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/70">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
@@ -218,9 +190,8 @@ export default function DashboardShell({ data, onResetToken }: DashboardProps) {
                 Want live alerts from staking-rewards-api?
               </h2>
               <p className="mt-3 text-base text-zinc-600 dark:text-zinc-300">
-                Use the <code className="font-mono">runValidatorRewardsStreamETH</code> or{" "}
-                <code className="font-mono">runMultipleValidatorRewardsStreamBSC</code>{" "}
-                helpers to subscribe to WebSocket feeds right from this dashboard.
+                Use the <code className="font-mono">runValidatorRewardsStreamETH</code>{" "}
+                helper to subscribe to WebSocket feeds right from this dashboard.
               </p>
             </div>
             <div className="rounded-2xl border border-dashed border-emerald-200 bg-emerald-50/60 p-4 text-sm text-emerald-800 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-200">

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { fetchValidatorHistory } from "@/lib/staking-data";
 
 export async function POST(request: Request) {
-  const { token, address, network, hours = 72 } = await request
+  const { token, address, hours = 72 } = await request
     .json()
     .catch(() => ({}));
 
@@ -20,13 +20,10 @@ export async function POST(request: Request) {
     );
   }
 
-  const resolvedNetwork = network === "bsc" ? "bsc" : "eth";
-
   try {
     const balances = await fetchValidatorHistory(
       token,
       address,
-      resolvedNetwork,
       hours,
     );
     return NextResponse.json({ balances });

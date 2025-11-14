@@ -5,8 +5,5 @@ export type DashboardNetworkData = {
   spotlight?: TransactionBalance;
 };
 
-export type DashboardData = {
-  eth: DashboardNetworkData;
-  bsc: DashboardNetworkData;
-};
+export type DashboardData = DashboardNetworkData;
 
