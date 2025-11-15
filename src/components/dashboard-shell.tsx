@@ -7,10 +7,8 @@ import LiveRewardsTable from "@/components/live-rewards-table";
 
 type DashboardProps = {
   data: DashboardData;
-  onResetToken?: () => void;
   onReload?: () => void;
   isLoading?: boolean;
-  token: string;
 };
 
 function formatNumber(value?: string, digits = 2) {
@@ -80,7 +78,7 @@ function ValidatorTable({ items }: { items: TransactionBalance[] }) {
                   colSpan={4}
                   className="px-4 py-6 text-center text-sm text-zinc-500"
                 >
-                  No data available. Confirm your Bitquery token and try again.
+                  No data available. Ensure BITQUERY_TOKEN is configured on the server.
                 </td>
               </tr>
             )}
@@ -93,10 +91,8 @@ function ValidatorTable({ items }: { items: TransactionBalance[] }) {
 
 export default function DashboardShell({
   data,
-  onResetToken,
   onReload,
   isLoading,
-  token,
 }: DashboardProps) {
   return (
     <main className="min-h-screen bg-gradient-to-b from-zinc-50 via-white to-zinc-100 px-6 py-12 font-sans text-zinc-900 dark:from-black dark:via-zinc-950 dark:to-black dark:text-white">
@@ -114,15 +110,6 @@ export default function DashboardShell({
                   className="rounded-full border border-emerald-500 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-emerald-600 transition hover:bg-emerald-50 dark:border-emerald-400 dark:text-emerald-300 dark:hover:bg-emerald-400/10"
                 >
                   {isLoading ? "Refreshing…" : "Load latest data"}
-                </button>
-              )}
-              {onResetToken && (
-                <button
-                  type="button"
-                  onClick={onResetToken}
-                  className="rounded-full border border-zinc-200 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-600 transition hover:border-zinc-400 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:text-white"
-                >
-                  Change token
                 </button>
               )}
               <Link
@@ -152,7 +139,7 @@ export default function DashboardShell({
             Ethereum for past 24 hours using Bitquery&apos;s Transaction Balance API.
           </p>
           <div className="mt-6">
-            <LiveRewardsTable token={token} />
+            <LiveRewardsTable />
           </div>
         </header>
 

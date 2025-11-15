@@ -2,39 +2,21 @@
 
 import { useEffect, useState } from "react";
 import DashboardShell from "@/components/dashboard-shell";
-import TokenForm from "@/components/token-form";
 import type { DashboardData } from "@/types/dashboard";
 
 export default function Home() {
-  const [token, setToken] = useState<string | null>(null);
-  const [tokenReady, setTokenReady] = useState(false);
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reloadFlag, setReloadFlag] = useState(0);
 
   useEffect(() => {
-    const stored = localStorage.getItem("bitquery_token");
-    if (stored) {
-      setToken(stored);
-    }
-    setTokenReady(true);
-  }, []);
-
-  useEffect(() => {
-    if (!token) {
-      setData(null);
-      return;
-    }
-
     let cancelled = false;
     setLoading(true);
     setError(null);
 
     fetch("/api/dashboard", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token }),
     })
       .then(async (response) => {
         if (!response.ok) {
@@ -62,33 +44,7 @@ export default function Home() {
     return () => {
       cancelled = true;
     };
-  }, [token, reloadFlag]);
-
-  const handleTokenSave = (value: string) => {
-    setToken(value);
-  };
-
-  const handleTokenReset = () => {
-    localStorage.removeItem("bitquery_token");
-    setToken(null);
-    setData(null);
-  };
-
-  if (!tokenReady) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-gradient-to-b from-zinc-50 via-white to-zinc-100 px-6 py-16 font-sans text-zinc-900 dark:from-black dark:via-zinc-950 dark:to-black dark:text-white">
-        <p className="text-sm text-zinc-500">Initializing dashboard…</p>
-      </main>
-    );
-  }
-
-  if (!token) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-gradient-to-b from-zinc-50 via-white to-zinc-100 px-6 py-16 font-sans text-zinc-900 dark:from-black dark:via-zinc-950 dark:to-black dark:text-white">
-        <TokenForm onTokenSave={handleTokenSave} />
-      </main>
-    );
-  }
+  }, [reloadFlag]);
 
   if (loading || !data) {
     return (
@@ -105,10 +61,10 @@ export default function Home() {
               {error} —{" "}
               <button
                 type="button"
-                onClick={() => setToken(null)}
+                onClick={() => setReloadFlag((prev) => prev + 1)}
                 className="underline"
               >
-                re-enter token
+                retry
               </button>
             </p>
           )}
@@ -120,8 +76,6 @@ export default function Home() {
   return (
     <DashboardShell
       data={data}
-      token={token}
-      onResetToken={handleTokenReset}
       onReload={() => setReloadFlag((prev) => prev + 1)}
       isLoading={loading}
     />

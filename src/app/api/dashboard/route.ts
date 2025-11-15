@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { fetchDashboardData } from "@/lib/staking-data";
 
-export async function POST(request: Request) {
-  const { token } = await request.json().catch(() => ({}));
-  if (!token || typeof token !== "string") {
+export async function POST() {
+  const token = process.env.BITQUERY_TOKEN;
+
+  if (!token) {
     return NextResponse.json(
-      { error: "Bitquery token required" },
-      { status: 400 },
+      { error: "BITQUERY_TOKEN missing in environment" },
+      { status: 500 },
     );
   }
 

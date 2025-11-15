@@ -5,7 +5,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 type Props = {
   address: string;
-  token?: string;
 };
 
 type StreamLog = {
@@ -13,7 +12,7 @@ type StreamLog = {
   message: string;
 };
 
-export default function MonitorWalletButton({ address, token }: Props) {
+export default function MonitorWalletButton({ address }: Props) {
   const [isStreaming, setIsStreaming] = useState(false);
   const [logs, setLogs] = useState<StreamLog[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -30,11 +29,6 @@ export default function MonitorWalletButton({ address, token }: Props) {
   }, [stopStream]);
 
   const startStream = async () => {
-    if (!token) {
-      setError("Provide a Bitquery token before starting the stream.");
-      return;
-    }
-
     setError(null);
     setLogs([]);
     setIsStreaming(true);
@@ -48,7 +42,7 @@ export default function MonitorWalletButton({ address, token }: Props) {
       const response = await fetch("/api/validator-stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ address, token }),
+        body: JSON.stringify({ address }),
         signal: controller.signal,
       });
 

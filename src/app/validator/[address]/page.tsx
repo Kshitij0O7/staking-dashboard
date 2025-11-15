@@ -30,26 +30,13 @@ export default function ValidatorDetail() {
 
   const address = params?.address ?? "";
 
-  const [token, setToken] = useState<string | null>(null);
-  const [tokenReady, setTokenReady] = useState(false);
   const [balances, setBalances] = useState<TransactionBalance[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reloadFlag, setReloadFlag] = useState(0);
 
   useEffect(() => {
-    const stored = localStorage.getItem("bitquery_token");
-    if (stored) {
-      setToken(stored);
-    }
-    setTokenReady(true);
-  }, []);
-
-  useEffect(() => {
-    if (!address || !token) {
-      if (!token) {
-        setError("Provide a Bitquery token from the dashboard to load data.");
-      }
+    if (!address) {
       return;
     }
 
@@ -61,7 +48,7 @@ export default function ValidatorDetail() {
         const response = await fetch("/api/validator", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token, address }),
+          body: JSON.stringify({ address }),
         });
 
         if (!response.ok) {
@@ -91,41 +78,10 @@ export default function ValidatorDetail() {
     return () => {
       cancelled = true;
     };
-  }, [address, token, reloadFlag]);
+  }, [address, reloadFlag]);
 
   const latest = balances[0];
   const summary = useMemo(() => summarizeRewards(balances), [balances]);
-
-  if (!tokenReady) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-6 py-16 text-center dark:bg-black">
-        <p className="text-sm text-zinc-500">Loading validator view…</p>
-      </main>
-    );
-  }
-
-  if (!token) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-6 py-16 text-center dark:bg-black">
-        <div className="max-w-xl space-y-4 rounded-3xl border border-amber-200 bg-amber-50/70 p-10 text-amber-900 shadow-sm dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100">
-          <p className="text-sm uppercase tracking-[0.3em] text-amber-600 dark:text-amber-200">
-            Token missing
-          </p>
-          <p>
-            Please return to the dashboard, enter your Bitquery access token, and
-            open this validator again. The token is stored locally in your
-            browser and required for querying Bitquery&apos;s APIs.
-          </p>
-          <Link
-            href="/"
-            className="inline-flex items-center justify-center rounded-full border border-amber-400 px-4 py-2 text-sm font-semibold text-amber-900 transition hover:bg-amber-100 dark:border-amber-300 dark:text-amber-100 dark:hover:bg-amber-500/20"
-          >
-            ← Back to dashboard
-          </Link>
-        </div>
-      </main>
-    );
-  }
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-zinc-50 via-white to-zinc-100 px-6 py-12 font-sans text-zinc-900 dark:from-black dark:via-zinc-950 dark:to-black dark:text-white">
@@ -238,7 +194,7 @@ export default function ValidatorDetail() {
             )}
           </div>
 
-          <MonitorWalletButton token={token ?? undefined} address={address} />
+          <MonitorWalletButton address={address} />
         </section>
 
         <section className="rounded-3xl border border-zinc-100 bg-white/70 p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/70">

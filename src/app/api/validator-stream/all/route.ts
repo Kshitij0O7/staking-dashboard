@@ -6,10 +6,10 @@ export const runtime = "nodejs";
 const textEncoder = new TextEncoder();
 
 export async function POST(req: NextRequest) {
-  const { token } = await req.json().catch(() => ({}));
+  const token = process.env.BITQUERY_TOKEN;
 
   if (!token) {
-    return new Response("Bitquery token missing", { status: 400 });
+    return new Response("Bitquery token missing", { status: 500 });
   }
 
   let socket: WebSocket | null = null;

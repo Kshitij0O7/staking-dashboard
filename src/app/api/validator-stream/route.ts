@@ -9,11 +9,12 @@ export const runtime = "nodejs";
 const textEncoder = new TextEncoder();
 
 export async function POST(req: NextRequest) {
-  const { address, token } = await req.json().catch(() => ({}));
+  const { address } = await req.json().catch(() => ({}));
+  const token = process.env.BITQUERY_TOKEN;
   const network: "eth" = "eth";
 
   if (!token) {
-    return new Response("Bitquery token missing", { status: 400 });
+    return new Response("Bitquery token missing", { status: 500 });
   }
 
   if (!address) {

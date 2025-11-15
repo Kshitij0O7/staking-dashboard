@@ -2,14 +2,13 @@ import { NextResponse } from "next/server";
 import { fetchValidatorHistory } from "@/lib/staking-data";
 
 export async function POST(request: Request) {
-  const { token, address, hours = 24 } = await request
-    .json()
-    .catch(() => ({}));
+  const token = process.env.BITQUERY_TOKEN;
+  const { address, hours = 24 } = await request.json().catch(() => ({}));
 
-  if (!token || typeof token !== "string") {
+  if (!token) {
     return NextResponse.json(
-      { error: "Bitquery token required" },
-      { status: 400 },
+      { error: "BITQUERY_TOKEN missing in environment" },
+      { status: 500 },
     );
   }
 
@@ -21,11 +20,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const balances = await fetchValidatorHistory(
-      token,
-      address,
-      hours,
-    );
+    const balances = await fetchValidatorHistory(token, address, hours);
     return NextResponse.json({ balances });
   } catch (error) {
     return NextResponse.json(

@@ -20,7 +20,7 @@ function formatNumber(value: number) {
   return value.toFixed(4);
 }
 
-export default function LiveRewardsTable({ token }: { token?: string }) {
+export default function LiveRewardsTable() {
   const [rows, setRows] = useState<LiveReward[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -33,10 +33,6 @@ export default function LiveRewardsTable({ token }: { token?: string }) {
   }, []);
 
   const startStream = useCallback(async () => {
-    if (!token) {
-      setError("Add a Bitquery token to stream live rewards.");
-      return;
-    }
     if (isStreaming) return;
 
     const controller = new AbortController();
@@ -52,7 +48,6 @@ export default function LiveRewardsTable({ token }: { token?: string }) {
       const response = await fetch("/api/validator-stream/all", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
         signal: controller.signal,
       });
 
@@ -125,12 +120,11 @@ export default function LiveRewardsTable({ token }: { token?: string }) {
       controllerRef.current = null;
       setIsStreaming(false);
     }
-  }, [token, isStreaming]);
+  }, [isStreaming]);
 
   const statusLabel = useMemo(() => {
-    if (!token) return "Token required";
-    return isStreaming ? "Live" : error ? "Stopped" : "Connecting…";
-  }, [token, isStreaming, error]);
+    return isStreaming ? "Live" : error ? "Stopped" : "Idle";
+  }, [isStreaming, error]);
 
   return (
     <section className="rounded-3xl border border-zinc-100 bg-white/80 p-6 shadow-sm backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/70">
@@ -161,12 +155,11 @@ export default function LiveRewardsTable({ token }: { token?: string }) {
           <button
             type="button"
             onClick={isStreaming ? stopStream : startStream}
-            disabled={!token}
             className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition ${
               isStreaming
                 ? "bg-rose-500 hover:bg-rose-600"
                 : "bg-emerald-600 hover:bg-emerald-700"
-            } disabled:cursor-not-allowed disabled:bg-zinc-400`}
+            }`}
           >
             {isStreaming ? "Stop stream" : "Start stream"}
           </button>
@@ -196,11 +189,9 @@ export default function LiveRewardsTable({ token }: { token?: string }) {
                   colSpan={4}
                   className="px-4 py-6 text-center text-sm text-zinc-500"
                 >
-                  {!token
-                    ? "Provide a Bitquery token to watch live rewards."
-                    : isStreaming
-                      ? "Listening for live validator rewards…"
-                      : "Click start stream to begin listening."}
+                  {isStreaming
+                    ? "Listening for live validator rewards…"
+                    : "Click start stream to begin listening."}
                 </td>
               </tr>
             ) : (
