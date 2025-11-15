@@ -1,4 +1,4 @@
-<div align="center">
+<!-- <div align="center"> -->
 
 # Ethereum Staking Rewards Dashboard
 
@@ -6,7 +6,7 @@ Monitor **staking**, **validator rewards**, **top validators**, and **staking po
 
 [Live Demo](https://staking-dashboard-self-beta.vercel.app) · [Sign up to Bitquery](https://ide.bitquery.io/?utm_source=github&utm_medium=footer&utm_campaign=staking-dashboard)
 
-</div>
+<!-- </div> -->
 
 ---
 
