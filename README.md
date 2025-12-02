@@ -65,6 +65,9 @@ This combination makes the project perfect for **staking pool monitoring**, **va
 | Repo link (you are here) | [https://github.com/Kshitij0O7/staking-dashboard?utm_source=github&utm_medium=footer&utm_campaign=staking-dashboard](https://github.com/Kshitij0O7/staking-dashboard?utm_source=github&utm_medium=footer&utm_campaign=staking-dashboard) |
 
 ---
+## Final Output
+
+<img width="2940" height="1664" alt="image" src="https://github.com/user-attachments/assets/53a02307-4682-4c26-b1c1-f70857bd1aae" />
 
 ## Quick Start
 
